@@ -7,21 +7,44 @@
 #include <limits>
 #include <math.h>
 
-std::vector<evt> gen_evts(pcg64 &r, std::vector<double> t0s) {
-    double mu1 = 3.168308578;
-    double sigma1 = 0.33346646;
-    double mu2 = 3.77243909665;
-    double sigma2 = 0.25119938;
-    
-    double p_pmt1 = 0.566725424184;
-    double p_pmt2 = 1.0 - p_pmt1;
-    double p_shrt = 0.215304093372;
-    double t_shrt = 153.902059371e-9;
-    double p_med = 0.38085062563;
-    double t_med = 1864.84601579e-9;
-    double p_long = (1.0 - p_shrt - p_med);
-    double t_long = 16311.0287305e-9;
-    
+ucn_gen_PCG::ucn_gen_PCG() {
+    double mu1 = 0.0;
+    double sigma1 = 0.0;
+    double mu2 = 0.0;
+    double sigma2 = 0.0;
+    double p_pmt1 = 0.0;
+    double p_shrt = 0.0;
+    double t_shrt = 0.0;
+    double p_med = 0.0;
+    double t_med = 0.0;
+    double t_long = 0.0;
+}
+
+ucn_gen_PCG::ucn_gen_PCG(double mu1,
+               double sigma1,
+               double mu2,
+               double sigma2,
+               double p_pmt1,
+               double p_shrt,
+               double t_shrt,
+               double p_med,
+               double t_med,
+               double t_long) {
+    this->mu1 = mu1;
+    this->sigma1 = sigma1;
+    this->mu2 = mu2;
+    this->sigma2 = sigma2;
+    this->p_pmt1 = p_pmt1;
+    this->p_pmt2 = 1.0 - p_pmt1;
+    this->p_shrt = p_shrt;
+    this->t_shrt = t_shrt;
+    this->p_med = p_med;
+    this->t_med = t_med;
+    this->p_long = 1.0 - p_shrt - p_med;
+    this->t_long = t_long;
+}
+
+std::vector<evt> ucn_gen_PCG::gen_evts(pcg64 &r, std::vector<double> t0s) {
     unsigned long numEvts = t0s.size();
     unsigned long numPhotons = 0;
     std::vector<unsigned int> phs(numEvts);

@@ -1,5 +1,6 @@
-CC=gcc
-CXX=g++
+#CC=gcc
+#CXX=g++
+CXX=mpic++
 OPT=-O3
 CFLAGS=$(OPT)
 CPPFLAGS=$(OPT) -std=c++11
@@ -24,3 +25,7 @@ count_ucn.o: count_ucn.cpp count_ucn.hpp
 
 rand_distributions.o: rand_distributions.cpp rand_distributions.hpp
 	$(CXX) $(CPPFLAGS) -c -o rand_distributions.o rand_distributions.cpp
+    
+clean:
+	rm -rf *.o
+	rm sim

@@ -2,6 +2,7 @@
 #include "count_ucn.hpp"
 #include "rand_distributions.hpp"
 #include "pcg/pcg_random.hpp"
+#include "seed_source.h"
 #include <vector>
 #include <numeric>
 #include <math.h>
@@ -17,11 +18,11 @@ int main(int argc, char** argv) {
     
     ierr = MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     ierr = MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-        
-    printf("Rank %d / %d\n", rank, nproc);
 
-//    pcg64 r(42u, 54u);
-    pcg64 r(42u, (unsigned int)rank);
+    __uint128_t seed = (((__uint128_t)seed_source[1]) << 127) | (((__uint128_t)seed_source[0]));
+    //One nice thing about the PCG generator is that it has 2^127 streams,
+    //which are each independent. Assign one stream per core based on core ID.
+    pcg64 r(seed, (unsigned int)rank);
 
     std::vector<double> rates = {100, 5000, 10000};
 

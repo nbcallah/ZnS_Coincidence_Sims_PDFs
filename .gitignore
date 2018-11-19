@@ -1,0 +1,4 @@
+*.o
+sim_root
+sim
+*.root

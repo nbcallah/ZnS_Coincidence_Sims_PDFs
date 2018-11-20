@@ -2,3 +2,4 @@
 sim_root
 sim
 *.root
+data/*

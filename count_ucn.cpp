@@ -33,6 +33,34 @@ std::vector<coinc> countUCN_nopup(std::vector<evt> &events, double initialWindow
     return coincs;
 }
 
+std::vector<coinc> countUCN_pup(std::vector<evt> &events, double initialWindow, double telescopeWindow, int phCut) {
+    std::vector<coinc> coincs;
+    
+    int i = 0;
+    while(i < events.size()) {
+        int j = i+1;
+        while(j < events.size() && (events[j].t - events[i].t) < (initialWindow + 0.1e-9)) {
+            if(events[j].ch != events[i].ch) {
+                int numPh = 1;
+                int k = i+1;
+                while(k < events.size() && (events[k].t - events[k-1].t) < (telescopeWindow + 0.1e-9)) {
+                    numPh++;
+                    k++;
+                }
+                if(numPh >= phCut) {
+                    coincs.push_back({events[i].t, events[k-1].t-events[i].t + (telescopeWindow + 0.1e-9)});
+                    i = k-1;
+                    break;
+                }
+            }
+            j++;
+        }
+        i++;
+    }
+    
+    return coincs;
+}
+
 double sumCoincs(std::vector<coinc> coincs, double binsize) {
     double dtCounts = 0;
     double t = floor(coincs.front().t/binsize);

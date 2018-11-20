@@ -13,8 +13,8 @@ typedef struct coinc {
 //    }
 } coinc;
 
-std::vector<coinc> countUCN(std::vector<evt> &events, double initialWindow, double telescopeWindow, int phCut);
+std::vector<coinc> countUCN_nopup(std::vector<evt> &events, double initialWindow, double telescopeWindow, int phCut);
 
-//double sumCoincs(std::vector<coinc> coincs);
+double sumCoincs(std::vector<coinc> coincs, double binsize);
 
 #endif /*COUNT_UCN_H*/

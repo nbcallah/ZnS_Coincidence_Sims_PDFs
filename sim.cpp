@@ -16,6 +16,9 @@ int main(int argc, char** argv) {
     ierr = MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     ierr = MPI_Comm_size(MPI_COMM_WORLD, &nproc);
 
+    //Set the seed with some random bits from seed_source.h. We only need
+    //128 bits since the state of the PCG generator is 128 bits long. We can
+    //Get different unique outputs by by offseting the indices by 2*i ((0,1), (2,3), (4,5), ...)
     __uint128_t seed = (((__uint128_t)seed_source[1]) << 127) | (((__uint128_t)seed_source[0]));
     //One nice thing about the PCG generator is that it has 2^127 streams,
     //which are each independent. Assign one stream per core based on core ID.
@@ -45,6 +48,8 @@ int main(int argc, char** argv) {
         double rate = *it;
         double length = 100000/rate; //Same expected counts per run. Not strictly necessary.
         std::vector<double> effs;
+        std::vector<double> effsDT;
+        std::vector<double> effsnopup;
 
         double err = 1;
         double mean = 1;
@@ -59,11 +64,12 @@ int main(int argc, char** argv) {
             }
 
             std::vector<evt> raw = generator.gen_evts(r, t0s);
-            std::vector<coinc> coincs = countUCN(raw, 100e-9, 1000e-9, 8);
+            std::vector<coinc> coincs = countUCN_nopup(raw, 100e-9, 1000e-9, 8);
 
             //Efficiency is the number of UCN counted divided by the
             //number of UCN created.
             effs.push_back((double)coincs.size()/(double)t0s.size());
+            effsDT.push_back(sumCoincs(coincs, 1.0)/(double)t0s.size());
             i++;
 
             //calculate mean, and std. dev. / sqrt(N) for the efficiencies
@@ -74,10 +80,24 @@ int main(int argc, char** argv) {
                                 [mean](double acc, double val){return acc + (mean-val)*(mean-val);})/(effs.size()-1)
                 )/sqrt(effs.size());
 
-            printf("%d | %d Eff: %f  (%lu/%lu); Avg: %f +/- %e\n", rank, i, (double)coincs.size()/(double)t0s.size(), coincs.size(), t0s.size(), mean, err);
+//            printf("%d | %d Eff: %f  (%lu/%lu); Avg: %f +/- %e\n", rank, i, (double)coincs.size()/(double)t0s.size(), coincs.size(), t0s.size(), mean, err);
         }
 
+        mean = std::accumulate(effs.begin(), effs.end(), 0.0)/effs.size();
+        err = sqrt(
+            std::accumulate(effs.begin(), effs.end(),
+                            0.0,
+                            [mean](double acc, double val){return acc + (mean-val)*(mean-val);})/(effs.size()-1)
+            )/sqrt(effs.size());
         printf("\n%f %f %e\n\n", rate, mean, err);
+        
+        double meanDT = std::accumulate(effsDT.begin(), effsDT.end(), 0.0)/effsDT.size();
+        double errDT = sqrt(
+            std::accumulate(effsDT.begin(), effsDT.end(),
+                            0.0,
+                            [mean](double acc, double val){return acc + (mean-val)*(mean-val);})/(effsDT.size()-1)
+            )/sqrt(effsDT.size());
+        printf("\n%f %f %e\n\n", rate, meanDT, errDT);
     }
     
     ierr = MPI_Finalize();

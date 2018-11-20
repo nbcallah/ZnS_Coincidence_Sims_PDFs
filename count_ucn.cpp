@@ -3,7 +3,7 @@
 #include <vector>
 #include <math.h>
 
-std::vector<coinc> countUCN(std::vector<evt> &events, double initialWindow, double telescopeWindow, int phCut) {
+std::vector<coinc> countUCN_nopup(std::vector<evt> &events, double initialWindow, double telescopeWindow, int phCut) {
     std::vector<coinc> coincs;
     
     int i = 0;
@@ -33,7 +33,23 @@ std::vector<coinc> countUCN(std::vector<evt> &events, double initialWindow, doub
     return coincs;
 }
 
-//double sumCoincs(std::vector<coinc> coincs) {
-//    double first = floor(coincs.front());
-//    double last = ceil(coincs.back());
-//}
+double sumCoincs(std::vector<coinc> coincs, double binsize) {
+    double dtCounts = 0;
+    double t = floor(coincs.front().t/binsize);
+    double binContent = 0;
+    double bindt = 0;
+    for(auto it = coincs.begin(); it < coincs.end(); it++) {
+        if(floor(it->t/binsize) > t) { //new bin
+            t = floor(it->t/binsize);
+            dtCounts += binContent/((binsize - bindt)/binsize);
+            binContent = 0;
+            bindt = 0;
+        }
+        bindt += it->dt;
+        binContent += 1;
+    }
+    
+    dtCounts += binContent/((binsize - bindt)/binsize);
+    
+    return dtCounts;
+}

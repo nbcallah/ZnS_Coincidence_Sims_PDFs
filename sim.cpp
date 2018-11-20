@@ -7,6 +7,8 @@
 #include <numeric>
 #include <math.h>
 #include <mpi.h>
+#include <getopt.h>
+#include <cstring>
 
 int main(int argc, char** argv) {
     int ierr = MPI_Init(&argc, &argv);
@@ -15,6 +17,52 @@ int main(int argc, char** argv) {
     
     ierr = MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     ierr = MPI_Comm_size(MPI_COMM_WORLD, &nproc);
+    
+    int c;
+
+    double window = 0.0;
+    double sumWindow = 0.0;
+    int numph = 0;
+
+    while (1) {
+        static struct option long_options[] = {
+            {"window", required_argument, 0, 'w'},
+            {"sumwindow", required_argument, 0, 's'},
+            {"numph", required_argument, 0, 'n'},
+            {0, 0, 0, 0},
+        };
+        /* getopt_long stores the option index here. */
+        int option_index = 0;
+
+        c = getopt_long(argc, argv, "w:s:n:", long_options, &option_index);
+
+        /* Detect the end of the options. */
+        if(c == -1) {
+            break;
+        }
+
+        switch(c) {
+            case 'w':
+                window = atof(optarg);
+                break;
+            case 's':
+                sumWindow = atof(optarg);
+                break;
+            case 'n':
+                numph = atoi(optarg);
+                break;
+            case '?':
+                /* getopt_long already printed an error message. */
+                break;
+            default:
+                exit(1);
+        }
+    }
+    
+    if(window == 0.0 || sumWindow == 0.0 || numph == 0 || window < 0.8 || sumWindow < 0.8) {
+        fprintf(stderr, "Error! Usage: ./sim --window=initial_coinc_window --sumwindow=telescope_window --numph=photon_threshold [in ns]\n");
+        exit(1);
+    }
 
     //Set the seed with some random bits from seed_source.h. We only need
     //128 bits since the state of the PCG generator is 128 bits long. We can
@@ -65,8 +113,8 @@ int main(int argc, char** argv) {
             }
 
             std::vector<evt> raw = generator.gen_evts(r, t0s);
-            std::vector<coinc> coincs = countUCN_pup(raw, 100e-9, 1000e-9, 8);
-            std::vector<coinc> coincs_nopup = countUCN_nopup(raw, 100e-9, 1000e-9, 8);
+            std::vector<coinc> coincs = countUCN_pup(raw, window*1e-9, sumWindow*1e-9, numph);
+            std::vector<coinc> coincs_nopup = countUCN_nopup(raw, window*1e-9, sumWindow*1e-9, numph);
 
             //Efficiency is the number of UCN counted divided by the
             //number of UCN created.

@@ -5,6 +5,7 @@
 #include "TTree.h"
 #include "ucn_gen_PCG.hpp"
 
+//One member for each branch in the tree.
 typedef struct root_entry {
     int channel;
     int edge;

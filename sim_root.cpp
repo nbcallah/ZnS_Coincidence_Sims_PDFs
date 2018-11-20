@@ -11,9 +11,6 @@
 #include "TTree.h"
 
 int main(int argc, char** argv) {
-//        int rank = omp_get_thread_num();
-//        int num = omp_get_num_threads();
-    
     int ierr = MPI_Init(&argc, &argv);
     int nproc;
     int rank;
@@ -30,6 +27,7 @@ int main(int argc, char** argv) {
 
     ucn_gen_PCG generator = ucn_gen_PCG();
 
+    //These are the parameter central values I've identified through the fits.
     generator.mu1 = 3.168308578;
     generator.sigma1 = 0.33346646;
     generator.mu2 = 3.77243909665;
@@ -43,58 +41,23 @@ int main(int argc, char** argv) {
     generator.p_long = 1.0 - generator.p_shrt - generator.p_med;
     generator.t_long = 16311.0287305e-9;
     
+    
+    //Generate a uniform rate by simulating a poisson process.
     double rate = 1000;
     double length = 100000/rate;
-
+    
     std::vector<double> t0s;
     double t = nextExp(r)/rate;
     while(t < length) {
         t0s.push_back(t);
-        t += nextExp(r)/rate;
+        t += nextExp(r)/rate; //interarrival time is exponentially distributed
     }
     
     std::vector<evt> raw = generator.gen_evts(r, t0s);
     
     TTree* tree = make_root_tree(raw);
     
-    tree->SaveAs("test.root");
-    
-//    
-//
-//    for(auto it = rates.begin(); it < rates.end(); it++) {
-//        double rate = *it;
-//        double length = 100000/rate;
-//        std::vector<double> effs;
-//
-//        double err = 1;
-//        double mean = 1;
-//        int i = 0;
-//        while(effs.size() < 10 || err > 1e-4*mean) {
-//            std::vector<double> t0s;
-//            double t = nextExp(r)/rate;
-//            while(t < length) {
-//                t0s.push_back(t);
-//                t += nextExp(r)/rate;
-//            }
-//
-//            std::vector<evt> raw = generator.gen_evts(r, t0s);
-//            std::vector<coinc> coincs = countUCN(raw, 100e-9, 1000e-9, 8);
-//
-//            effs.push_back((double)coincs.size()/(double)t0s.size());
-//            i++;
-//
-//            mean = std::accumulate(effs.begin(), effs.end(), 0.0)/effs.size();
-//            err = sqrt(
-//                std::accumulate(effs.begin(), effs.end(),
-//                                0.0,
-//                                [mean](double acc, double val){return acc + (mean-val)*(mean-val);})/(effs.size()-1)
-//                )/sqrt(effs.size());
-//
-//            printf("%d | %d Eff: %f  (%lu/%lu); Avg: %f +/- %e\n", rank, i, (double)coincs.size()/(double)t0s.size(), coincs.size(), t0s.size(), mean, err);
-//        }
-//
-//        printf("\n%f %f %e\n\n", rate, mean, err);
-//    }
+    printf("%lld\n", tree->GetEntries());
     
     ierr = MPI_Finalize();
 

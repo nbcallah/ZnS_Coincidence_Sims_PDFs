@@ -4,9 +4,9 @@
 #include <vector>
 #include "pcg/pcg_random.hpp"
 
-typedef struct evt {
+typedef struct evt { //light-weight struct for PMT events
     int ch;
-    int id;
+    int id; //unique ID for each event.
     double t;
     
     bool operator<(const evt& rhs) const {

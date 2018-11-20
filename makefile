@@ -37,4 +37,5 @@ make_root_tree.o: make_root_tree.cpp make_root_tree.hpp
     
 clean:
 	rm -rf *.o
-	rm sim
+	rm -rf sim
+	rm -rf sim_root

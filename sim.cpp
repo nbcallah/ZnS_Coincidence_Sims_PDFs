@@ -141,7 +141,8 @@ int main(int argc, char** argv) {
                             0.0,
                             [mean](double acc, double val){return acc + (mean-val)*(mean-val);})/(effs.size()-1)
             )/sqrt(effs.size());
-        printf("(%f, %f, %e), #pup_nocorr\n", rate, mean, err);
+//        printf("(%f, %f, %e), #pup_nocorr\n", rate, mean, err);
+        printf("%f %f %e 0 0 %f %f %d\n", rate, mean, err, window, sumWindow, numph);
         
         mean = std::accumulate(effsDT.begin(), effsDT.end(), 0.0)/effsDT.size();
         err = sqrt(
@@ -149,7 +150,8 @@ int main(int argc, char** argv) {
                             0.0,
                             [mean](double acc, double val){return acc + (mean-val)*(mean-val);})/(effsDT.size()-1)
             )/sqrt(effsDT.size());
-        printf("(%f, %f, %e), #pup_corr\n", rate, mean, err);
+//        printf("(%f, %f, %e), #pup_corr\n", rate, mean, err);
+        printf("%f %f %e 0 1 %f %f %d\n", rate, mean, err, window, sumWindow, numph);
         
         mean = std::accumulate(effsnopup.begin(), effsnopup.end(), 0.0)/effsnopup.size();
         err = sqrt(
@@ -157,7 +159,8 @@ int main(int argc, char** argv) {
                             0.0,
                             [mean](double acc, double val){return acc + (mean-val)*(mean-val);})/(effsnopup.size()-1)
             )/sqrt(effsnopup.size());
-        printf("(%f, %f, %e), #nopup_nocorr\n", rate, mean, err);
+//        printf("(%f, %f, %e), #nopup_nocorr\n", rate, mean, err);
+        printf("%f %f %e 1 0 %f %f %d\n", rate, mean, err, window, sumWindow, numph);
         
         mean = std::accumulate(effsnopupDT.begin(), effsnopupDT.end(), 0.0)/effsnopupDT.size();
         err = sqrt(
@@ -165,7 +168,8 @@ int main(int argc, char** argv) {
                             0.0,
                             [mean](double acc, double val){return acc + (mean-val)*(mean-val);})/(effsnopupDT.size()-1)
             )/sqrt(effsnopupDT.size());
-        printf("(%f, %f, %e), #nopup_corr\n", rate, mean, err);
+//        printf("(%f, %f, %e), #nopup_corr\n", rate, mean, err);
+        printf("%f %f %e 1 1 %f %f %d\n", rate, mean, err, window, sumWindow, numph);
     }
     
     ierr = MPI_Finalize();

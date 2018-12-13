@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
     generator.sigma1 = 0.33346646;
     generator.mu2 = 3.77243909665;
     generator.sigma2 = 0.25119938;
-    generator.p_pmt1 = 0.566725424184;
+    generator.p_pmt1 = 0.56596113354854816;
     generator.p_pmt2 = 1.0 - generator.p_pmt1;
     generator.p_shrt = 0.215304093372;
     generator.t_shrt = 153.902059371e-9;

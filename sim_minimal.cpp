@@ -111,9 +111,6 @@ int main(int argc, char** argv) {
         double rate = *it;
         double length = 100000/rate; //Same expected counts per run. Not strictly necessary.
         std::vector<double> effs;
-        std::vector<double> effsDT;
-        std::vector<double> effsnopup;
-        std::vector<double> effsnopupDT;
 
         double err = 1;
         double mean = 1;
@@ -130,16 +127,17 @@ int main(int argc, char** argv) {
             //Generate coincidence events using the ZnS model
             std::vector<evt> raw = generator.gen_evts(r, t0s);
             
-            //Now count the UCN events
-            std::vector<coinc> coincs = countUCN_pup(raw, window*1e-9, sumWindow*1e-9, numph);
-            std::vector<coinc> coincs_nopup = countUCN_nopup(raw, window*1e-9, sumWindow*1e-9, numph);
-
-            //Efficiency is the number of UCN counted divided by the
-            //number of UCN created.
-            effs.push_back((double)coincs.size()/(double)t0s.size());
-            effsDT.push_back(sumCoincs(coincs, 1.0)/(double)t0s.size());
-            effsnopup.push_back((double)coincs_nopup.size()/(double)t0s.size());
-            effsnopupDT.push_back(sumCoincs(coincs_nopup, 1.0)/(double)t0s.size());
+            /*
+            This is where you count the UCN events. Should take in a vector of evt's
+            (or whatever structure you want to put the data in), the coincidence
+            criteria and somehow returns deadtime corrected counts.
+            */
+            //double nCoincs = countUCN(raw, window*1e-9, sumWindow*1e-9, numph);
+            double nCoincs = 0.0;
+            double dtCorrection = 0.0;
+            /**/
+            
+            effs.push_back((nCoincs + dtCorrection)/(double)t0s.size());
             i++;
 
             //calculate mean, and std. dev. / sqrt(N) for the efficiencies
@@ -150,7 +148,6 @@ int main(int argc, char** argv) {
                                 [mean](double acc, double val){return acc + (mean-val)*(mean-val);})/(effs.size()-1)
                 )/sqrt(effs.size());
 
-//            printf("%d | %d Eff: %f  (%lu/%lu); Avg: %f +/- %e\n", rank, i, (double)coincs.size()/(double)t0s.size(), coincs.size(), t0s.size(), mean, err);
         }
 
         mean = std::accumulate(effs.begin(), effs.end(), 0.0)/effs.size();
@@ -159,35 +156,7 @@ int main(int argc, char** argv) {
                             0.0,
                             [mean](double acc, double val){return acc + (mean-val)*(mean-val);})/(effs.size()-1)
             )/sqrt(effs.size());
-//        printf("(%f, %f, %e), #pup_nocorr\n", rate, mean, err);
-        printf("%f %f %e 0 0 %f %f %d\n", rate, mean, err, window, sumWindow, numph);
-        
-        mean = std::accumulate(effsDT.begin(), effsDT.end(), 0.0)/effsDT.size();
-        err = sqrt(
-            std::accumulate(effsDT.begin(), effsDT.end(),
-                            0.0,
-                            [mean](double acc, double val){return acc + (mean-val)*(mean-val);})/(effsDT.size()-1)
-            )/sqrt(effsDT.size());
-//        printf("(%f, %f, %e), #pup_corr\n", rate, mean, err);
         printf("%f %f %e 0 1 %f %f %d\n", rate, mean, err, window, sumWindow, numph);
-        
-        mean = std::accumulate(effsnopup.begin(), effsnopup.end(), 0.0)/effsnopup.size();
-        err = sqrt(
-            std::accumulate(effsnopup.begin(), effsnopup.end(),
-                            0.0,
-                            [mean](double acc, double val){return acc + (mean-val)*(mean-val);})/(effsnopup.size()-1)
-            )/sqrt(effsnopup.size());
-//        printf("(%f, %f, %e), #nopup_nocorr\n", rate, mean, err);
-        printf("%f %f %e 1 0 %f %f %d\n", rate, mean, err, window, sumWindow, numph);
-        
-        mean = std::accumulate(effsnopupDT.begin(), effsnopupDT.end(), 0.0)/effsnopupDT.size();
-        err = sqrt(
-            std::accumulate(effsnopupDT.begin(), effsnopupDT.end(),
-                            0.0,
-                            [mean](double acc, double val){return acc + (mean-val)*(mean-val);})/(effsnopupDT.size()-1)
-            )/sqrt(effsnopupDT.size());
-//        printf("(%f, %f, %e), #nopup_corr\n", rate, mean, err);
-        printf("%f %f %e 1 1 %f %f %d\n", rate, mean, err, window, sumWindow, numph);
     }
     
     ierr = MPI_Finalize();

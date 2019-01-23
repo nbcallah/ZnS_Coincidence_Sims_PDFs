@@ -16,12 +16,18 @@ sim: sim.o ucn_gen_PCG.o count_ucn.o rand_distributions.o
 
 sim_root: sim_root.o ucn_gen_PCG.o count_ucn.o rand_distributions.o make_root_tree.o
 	$(CXX) -o sim_root sim_root.o ucn_gen_PCG.o count_ucn.o rand_distributions.o make_root_tree.o $(CPPLFLAGS) `root-config --libs`
+    
+sim_minimal: sim_minimal.o ucn_gen_PCG.o count_ucn.o rand_distributions.o
+	$(CXX) -o sim_minimal sim_minimal.o ucn_gen_PCG.o count_ucn.o rand_distributions.o $(CPPLFLAGS)
 
 sim.o: sim.cpp
 	$(CXX) $(CPPFLAGS) -c -o sim.o sim.cpp
 
 sim_root.o: sim_root.cpp
 	$(CXX) $(CPPFLAGS) `root-config --cflags` -c -o sim_root.o sim_root.cpp
+    
+sim_minimal.o: sim_minimal.cpp
+	$(CXX) $(CPPFLAGS) -c -o sim_minimal.o sim_minimal.cpp
 	
 ucn_gen_PCG.o: ucn_gen_PCG.cpp ucn_gen_PCG.hpp
 	$(CXX) $(CPPFLAGS) -c -o ucn_gen_PCG.o ucn_gen_PCG.cpp
@@ -39,3 +45,4 @@ clean:
 	rm -rf *.o
 	rm -rf sim
 	rm -rf sim_root
+	rm -rf sim_minimal

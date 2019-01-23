@@ -1,6 +1,7 @@
 *.o
 sim_root
 sim
+sim_minimal
 *.root
 data/*.ipynb
 data/.ipynb_checkpoints/*

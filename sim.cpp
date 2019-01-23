@@ -78,33 +78,34 @@ int main(int argc, char** argv) {
     ucn_gen_PCG generator = ucn_gen_PCG();
 
 //    //These are the parameter central values I've identified through the fits.
-//    generator.mu1 = 3.168308578;
-//    generator.sigma1 = 0.33346646;
-//    generator.mu2 = 3.77243909665;
-//    generator.sigma2 = 0.25119938;
-//    generator.p_pmt1 = 0.56596113354854816;
-//    generator.p_pmt2 = 1.0 - generator.p_pmt1;
-//    generator.p_shrt = 0.215304093372;
-//    generator.t_shrt = 153.902059371e-9;
-//    generator.p_med = 0.38085062563;
-//    generator.t_med = 1864.84601579e-9;
-//    generator.p_long = 1.0 - generator.p_shrt - generator.p_med;
-//    generator.t_long = 16311.0287305e-9;
+    generator.mu1 = 3.168308578;
+    generator.sigma1 = 0.33346646;
+    generator.mu2 = 3.77243909665;
+    generator.sigma2 = 0.25119938;
+    generator.p_pmt1 = 0.56596113354854816;
+    generator.p_pmt2 = 1.0 - generator.p_pmt1;
+    generator.p_shrt = 0.215304093372;
+    generator.t_shrt = 153.902059371e-9;
+    generator.p_med = 0.38085062563;
+    generator.t_med = 1864.84601579e-9;
+    generator.p_long = 1.0 - generator.p_shrt - generator.p_med;
+    generator.t_long = 16311.0287305e-9;
     
     //These are the parameter central values for MCS1 I've identified through the fits.
-    generator.mu1 = 3.06304046296;
-    generator.sigma1 = 0.30733674;
-    generator.mu2 = 3.63986912126;
-    generator.sigma2 = 0.24810129;
-    generator.p_pmt1 = 0.58367057462802363;
-    generator.p_pmt2 = 1.0 - generator.p_pmt1;
-    generator.p_shrt = 0.202992508215;
-    generator.t_shrt = 150.009665528e-9;
-    generator.p_med = 0.391585037798;
-    generator.t_med = 1855.838688e-9;
-    generator.p_long = 1.0 - generator.p_shrt - generator.p_med;
-    generator.t_long = 16132.1031329e-9;
-
+//    generator.mu1 = 3.06304046296;
+//    generator.sigma1 = 0.30733674;
+//    generator.mu2 = 3.63986912126;
+//    generator.sigma2 = 0.24810129;
+//    generator.p_pmt1 = 0.58367057462802363;
+//    generator.p_pmt2 = 1.0 - generator.p_pmt1;
+//    generator.p_shrt = 0.202992508215;
+//    generator.t_shrt = 150.009665528e-9;
+//    generator.p_med = 0.391585037798;
+//    generator.t_med = 1855.838688e-9;
+//    generator.p_long = 1.0 - generator.p_shrt - generator.p_med;
+//    generator.t_long = 16132.1031329e-9;
+//    100.000000 1.041664 1.039387e-04 0 0 50.000000 200.000000 4
+    printf("Rate efficiency err pileup_correction dt_correction initial_window summing_window num_photons\n");
     //Want to measure efficiency by rate. Loop over rates.
     for(auto it = rates.begin(); it < rates.end(); it++) {
         double rate = *it;

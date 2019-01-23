@@ -2,4 +2,7 @@
 sim_root
 sim
 *.root
-data/*
+data/*.ipynb
+data/.ipynb_checkpoints/*
+data/mcs0_mcs1_comp/*
+data/old/*

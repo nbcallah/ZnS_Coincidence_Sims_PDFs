@@ -18,6 +18,7 @@ ucn_gen_PCG::ucn_gen_PCG() { //Default constructer, just 0 everything.
     double p_med = 0.0;
     double t_med = 0.0;
     double t_long = 0.0;
+    double t_trunc = 0.0;
 }
 
 ucn_gen_PCG::ucn_gen_PCG(double mu1, //Construct by passing each parameter
@@ -29,7 +30,8 @@ ucn_gen_PCG::ucn_gen_PCG(double mu1, //Construct by passing each parameter
                double t_shrt,
                double p_med,
                double t_med,
-               double t_long) {
+               double t_long,
+               double t_trunc) {
     this->mu1 = mu1;
     this->sigma1 = sigma1;
     this->mu2 = mu2;
@@ -42,6 +44,7 @@ ucn_gen_PCG::ucn_gen_PCG(double mu1, //Construct by passing each parameter
     this->t_med = t_med;
     this->p_long = 1.0 - p_shrt - p_med;
     this->t_long = t_long;
+    this->t_trunc = t_trunc;
 }
 
 std::vector<evt> ucn_gen_PCG::gen_evts(pcg64 &r, std::vector<double> t0s) {
@@ -108,9 +111,11 @@ std::vector<evt> ucn_gen_PCG::gen_evts(pcg64 &r, std::vector<double> t0s) {
             double expOff = nextExp(r)*tau; //offset from beginning of event is exponentially
                                             //distributed with t_shrt, t_med, or t_long
             //Push back event, with unique ID of the iterator through the PHS array.
-            evts.push_back({ch,
-                            i,
-                            t0s[i] + expOff});
+            if(expOff < t_trunc) {
+                evts.push_back({ch,
+                                i,
+                                t0s[i] + expOff});
+            }
         }
     }
     

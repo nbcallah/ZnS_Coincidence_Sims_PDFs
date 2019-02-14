@@ -5,6 +5,7 @@
 #include "seed_source.h"
 #include <vector>
 #include <numeric>
+#include <limits>
 #include <math.h>
 #include <mpi.h>
 #include <getopt.h>
@@ -90,6 +91,8 @@ int main(int argc, char** argv) {
     generator.t_med = 1864.84601579e-9;
     generator.p_long = 1.0 - generator.p_shrt - generator.p_med;
     generator.t_long = 16311.0287305e-9;
+//    generator.t_trunc = 40000e-9;
+    generator.t_trunc = std::numeric_limits<float>::infinity();
     
     //These are the parameter central values for MCS1 I've identified through the fits.
 //    generator.mu1 = 3.06304046296;
@@ -104,6 +107,7 @@ int main(int argc, char** argv) {
 //    generator.t_med = 1855.838688e-9;
 //    generator.p_long = 1.0 - generator.p_shrt - generator.p_med;
 //    generator.t_long = 16132.1031329e-9;
+//    generator.t_trunc = std::numeric_limits<float>::infinity();
 
     printf("Rate efficiency err pileup_correction dt_correction initial_window summing_window num_photons\n");
     //Want to measure efficiency by rate. Loop over rates.

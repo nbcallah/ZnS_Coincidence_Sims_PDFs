@@ -6,6 +6,7 @@
 #include "seed_source.h"
 #include <vector>
 #include <numeric>
+#include <limits>
 #include <math.h>
 #include <mpi.h>
 #include "TTree.h"
@@ -40,6 +41,7 @@ int main(int argc, char** argv) {
     generator.t_med = 1864.84601579e-9;
     generator.p_long = 1.0 - generator.p_shrt - generator.p_med;
     generator.t_long = 16311.0287305e-9;
+    generator.t_trunc = std::numeric_limits<float>::infinity();
     
     
     //Generate a uniform rate by simulating a poisson process.

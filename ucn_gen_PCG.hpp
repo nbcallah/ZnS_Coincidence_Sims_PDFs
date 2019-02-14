@@ -28,6 +28,7 @@ class ucn_gen_PCG {
         double t_med;
         double p_long;
         double t_long;
+        double t_trunc;
         
         std::vector<evt> gen_evts(pcg64 &r, std::vector<double> t0s);
     
@@ -41,7 +42,8 @@ class ucn_gen_PCG {
                double t_shrt,
                double p_med,
                double t_med,
-               double t_long);
+               double t_long,
+               double t_trunc);
 };
 
 #endif /*UCN_GEN_PCG_H*/

@@ -131,6 +131,7 @@ int main(int argc, char** argv) {
             std::vector<evt> raw = generator.gen_evts(r, t0s);
             
             //Now count the UCN events
+//            std::vector<coinc> coincs = countUCN_chris(raw, window*1e-9, sumWindow*1e-9, numph, r);
             std::vector<coinc> coincs = countUCN_pup(raw, window*1e-9, sumWindow*1e-9, numph);
             std::vector<coinc> coincs_nopup = countUCN_nopup(raw, window*1e-9, sumWindow*1e-9, numph);
 
